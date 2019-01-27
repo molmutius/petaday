@@ -13,8 +13,9 @@ import createSagaMiddleware from 'redux-saga'
 import { Provider } from 'react-redux'
 import { reducer } from './redux'
 import { watcherSaga } from './sagas'
-
-import PictureView from './pictureview/pictureview'
+import { createStackNavigator, createAppContainer } from 'react-navigation'
+import PictureView from './home-screen/home-screen'
+import DetailScreen from './detail-screen/detail-screen'
 
 const sagaMiddleware = createSagaMiddleware()
 
@@ -24,13 +25,22 @@ const store = createStore(
     compose(applyMiddleware(sagaMiddleware))
 )
 
+const MainNavigator = createStackNavigator({
+    Home: { screen: PictureView },
+    Detail: { screen: DetailScreen }
+}, {
+    initialRouteName: 'Home'
+})
+
+const AppContainer = createAppContainer(MainNavigator)
+
 sagaMiddleware.run(watcherSaga)
 
 export default class App extends Component {
     render () {
         return (
             <Provider store={store}>
-                <PictureView />
+                <AppContainer />
             </Provider>
         )
     }

@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { ActivityIndicator, Button, Image, Text, View } from 'react-native'
 import { connect } from 'react-redux'
-import { createStyles } from './pictureview-styles'
+import { createStyles } from './home-screen-styles'
 
 class PictureView extends React.Component {
     static propTypes = {
@@ -33,26 +33,26 @@ class PictureView extends React.Component {
         const { fetching, picture, error } = this.props
         return (
             <View style={this.styles.container}>
-                { error &&
-                    <Text style={this.styles.welcome}>Uh oh - Something went wrong ...</Text>
-                }
-
                 <View style={this.styles.pictureWrapper}>
+                    { error &&
+                        <Text style={this.styles.welcomeText}>Uh oh - Something went wrong ...</Text>
+                    }
+
                     { picture && !fetching &&
                         this.renderImage()
                     }
+
+                    { !this.state.loadingFinished &&
+                        this.renderLoadingIndicator()
+                    }
                 </View>
 
-                { !this.state.loadingFinished &&
-                    <View style={this.styles.loadingIndicator}>
-                        { this.renderLoadingIndicator() }
-                    </View>
-                }
-
-                { !this.state.loadingFinished
-                    ? (<Button disabled style={this.styles.button} title='Loading ...' />)
-                    : (<Button onPress={this.requestPicture} style={this.styles.button} title='Get picture' />)
-                }
+                <View style={this.styles.infoWrapper}>
+                    { !this.state.loadingFinished
+                        ? (<Button disabled style={this.styles.button} title='Loading ...' />)
+                        : (<Button onPress={this.requestPicture} style={this.styles.button} title='Another pet' />)
+                    }
+                </View>
             </View>
         )
     }
@@ -66,6 +66,7 @@ class PictureView extends React.Component {
         const { picture } = this.props
         return (
             <Image
+                resizeMode='cover'
                 onLoad={this.onLoadingFinished}
                 style={this.styles.picture}
                 source={{ uri: picture }} />
@@ -74,7 +75,9 @@ class PictureView extends React.Component {
 
     renderLoadingIndicator () {
         return (
-            <ActivityIndicator size='large' color='#0000ff' />
+            <View style={this.styles.loadingIndicator}>
+                <ActivityIndicator size='large' color='#0000ff' />
+            </View>
         )
     }
 
