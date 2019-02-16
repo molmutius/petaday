@@ -1,16 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { ActivityIndicator, Button, Image, Text, View } from 'react-native'
+import { ActivityIndicator, Image, Share, Text, TouchableHighlight, View } from 'react-native'
 import { connect } from 'react-redux'
 import { createStyles } from './home-screen-styles'
+import ButtonWithStyle from './button-with-style'
 
 class PictureView extends React.Component {
     static propTypes = {
         error: PropTypes.object,
         fetching: PropTypes.bool,
+        navigation: PropTypes.object,
         onRequestPicture: PropTypes.func,
         picture: PropTypes.string
     }
+
+    static navigationOptions = { header: null }
 
     constructor (props) {
         super(props)
@@ -22,6 +26,7 @@ class PictureView extends React.Component {
         this.renderImage = this.renderImage.bind(this)
         this.onLoadingFinished = this.onLoadingFinished.bind(this)
         this.requestPicture = this.requestPicture.bind(this)
+        this.onPressPicture = this.onPressPicture.bind(this)
         this.onLoadingFinished = this.onLoadingFinished.bind(this)
     }
 
@@ -47,11 +52,51 @@ class PictureView extends React.Component {
                     }
                 </View>
 
-                <View style={this.styles.infoWrapper}>
-                    { !this.state.loadingFinished
-                        ? (<Button disabled style={this.styles.button} title='Loading ...' />)
-                        : (<Button onPress={this.requestPicture} style={this.styles.button} title='Another pet' />)
-                    }
+                { this.renderInfoWrapper() }
+            </View>
+        )
+    }
+
+    async onShare (picture) {
+        try {
+            const result = await Share.share({
+                message: 'Hey, have a look at the picture I found on pet-a-day: ' + picture,
+                dialogTitle: 'Share that pet'
+            })
+
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                // shared with activity type of result.activityType
+                }
+                else {
+                // shared
+                }
+            }
+            else if (result.action === Share.dismissedAction) {
+            // dismissed
+            }
+        }
+        catch (error) {
+            alert(error.message)
+        }
+    }
+
+    renderInfoWrapper () {
+        const { picture } = this.props.picture
+        const buttonStyle = this.styles.infoButton
+        return (
+            <View style={this.styles.infoWrapper}>
+                <View style={this.styles.infoButtonContainer}>
+                    <ButtonWithStyle
+                        disabled={!this.state.loadingFinished}
+                        style={buttonStyle}
+                        onPress={this.requestPicture}
+                        title='Another pet' />
+                    <ButtonWithStyle
+                        disabled={!this.state.loadingFinished}
+                        style={buttonStyle}
+                        onPress={this.onShare.bind(this, picture)}
+                        title='Share' />
                 </View>
             </View>
         )
@@ -65,12 +110,18 @@ class PictureView extends React.Component {
     renderImage () {
         const { picture } = this.props
         return (
-            <Image
-                resizeMode='cover'
-                onLoad={this.onLoadingFinished}
-                style={this.styles.picture}
-                source={{ uri: picture }} />
+            <TouchableHighlight style={this.styles.picture} onPress={this.onPressPicture}>
+                <Image
+                    resizeMode='cover'
+                    style={this.styles.picture}
+                    onLoad={this.onLoadingFinished}
+                    source={{ uri: picture }} />
+            </TouchableHighlight>
         )
+    }
+
+    onPressPicture () {
+        this.props.navigation.navigate('Detail')
     }
 
     renderLoadingIndicator () {

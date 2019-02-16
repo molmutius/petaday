@@ -22,6 +22,7 @@ function * workerSaga () {
     try {
         const response = yield call(fetchPicture)
         const picture = response.data[0].url
+        // const picture = 'https://cdn2.thecatapi.com/images/1u.gif'
         console.log(picture)
         // dispatch a success action to the store with the new picture
         yield put({ type: 'API_CALL_SUCCESS', picture })

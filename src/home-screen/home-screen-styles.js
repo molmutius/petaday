@@ -17,11 +17,6 @@ export function createStyles () {
             textAlign: 'center',
             margin: 10
         },
-        button: {
-            alignSelf: 'flex-end',
-            alignItems: 'flex-end',
-            justifyContent: 'flex-end'
-        },
         pictureWrapper: {
             flexGrow: 3,
             width: '100%',
@@ -44,6 +39,15 @@ export function createStyles () {
             justifyContent: 'center',
             alignItems: 'flex-start',
             backgroundColor: '#fe4a49'
+        },
+        infoButtonContainer: {
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'center'
+        },
+        infoButton: {
+            paddingLeft: 5,
+            paddingRight: 5
         }
     })
 }
